@@ -47,8 +47,12 @@ def catchComic(url):
     def ss(a,b,c,d):
         e = a[b:b+c]
         if d == None:
-            return 
+            e=re.sub('[a-zA-z]*gi','')
+            return e
+        else:
+            return e
         pass
+    
     p = 1
     f = 50
     cs = re.findall('cs=\'(\w+)\'',readUrl(url))
