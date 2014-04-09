@@ -1,3 +1,4 @@
+#coding=Utf8
 import re
 import urllib2
 def readUrl(url):
@@ -11,6 +12,9 @@ def creatPath(pathName):
         pass
 #http://comic.sfacg.com/Utility/1506/013.js
 #http://comic.sfacg.com/Utility/(comicPar)/(ch.).js
-k=readUrl('http://s.sfacg.com/?Key=%u6E90%u541B&S=&SS=')
-print k
-print re.findall('alt=\"(.+)\" />',k)[0].decode('utf8', 'ignore')
+def Utf8toBig5(str):
+    return str.decode('big5', 'ignore').encode('utf-8', 'ignore')
+input = [str(raw_input('>>>>請輸入名稱以搜尋:'))]
+searchResult=re.findall('alt=\"(.+)\" />',readUrl('http://s.sfacg.com/?Key='+Utf8toBig5(input[0])+'&S=&SS='))[0].decode('utf8', 'ignore')
+for i in range(len(searchResult)):
+    print str(i)+'.'+searchResult[i]
