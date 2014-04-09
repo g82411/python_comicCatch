@@ -15,7 +15,9 @@ def creatPath(pathName):
 def Utf8toBig5(str):
     return str.decode('big5', 'ignore').encode('utf-8', 'ignore')
 input = [str(raw_input('>>>>請輸入名稱以搜尋:'))]
-searchResult=re.findall('alt=\"(.+)\" />',readUrl('http://s.sfacg.com/?Key='+Utf8toBig5(input[0])+'&S=&SS='))[0].decode('utf8', 'ignore')
+searchResult=re.findall('<a href=\"(http://comic.sfacg.com/HTML/\w+)\" id="SearchResultList\d___ResultList_ctl\d+_LinkInfo" class="orange_link2">(.+)</a>',readUrl('http://s.sfacg.com/?Key='+Utf8toBig5(input[0])+'&S=&SS='))
 for i in range(len(searchResult)):
-    print str(i+1)+'.'+searchResult[i]
+    print str(i)+searchResult[i][1]
+
 choice=[str(raw_input('>>>>請輸入代號:'))]
+
