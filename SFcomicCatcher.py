@@ -17,7 +17,7 @@ def Utf8toBig5(str):
 input = [str(raw_input('>>>>請輸入名稱以搜尋:'))]
 searchResult=re.findall('<a href=\"(http://comic.sfacg.com/HTML/\w+)\" id="SearchResultList\d___ResultList_ctl\d+_LinkInfo" class="orange_link2">(.+)</a>',readUrl('http://s.sfacg.com/?Key='+Utf8toBig5(input[0])+'&S=&SS='))
 for i in range(len(searchResult)):
-    print str(i)+searchResult[i][1]
-
-choice=[str(raw_input('>>>>請輸入代號:'))]
-
+    print str(i)+'.'+searchResult[i][1]
+choice=[str(raw_input('>>>>請輸入代號:'))][0]
+chList=re.findall('/HTML/\w+/(\w+)/',readUrl(searchResult[int(choice)][0]))
+print chList
