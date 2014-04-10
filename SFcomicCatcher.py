@@ -2,8 +2,8 @@
 import re
 import urllib2
 import os
-import gevent
-from gevent import monkey
+
+
 def readUrl(url):
         req = urllib2.urlopen(url)
         html_src = req.read()
@@ -44,6 +44,5 @@ for i in range (len(chList)):
         for j in range (len(picUrl)):
                  urls.append('http://'+hosts+'.sfacg.com'+picUrl[i])
 print urls
-monkey.patch_all()
-jobs = [gevent.spawn(downloadImg, url) for url in urls]
-gevent.joinall(jobs)
+for i in range(len(urls)):
+    downloadImg(urls[i])
