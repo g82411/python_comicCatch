@@ -24,7 +24,7 @@ def downloadImg(url):
             f.close
             downloadImg(url)
         filename=re.findall('(\w+)/(\d+)_\w+.jpg',url)[0]
-        f = open (filename[0].zfill(3)+_+filename[1],'wb')
+        f = open (filename[0].zfill(3)+'_'+filename[1]+'.jpg','wb')
         f.write(img)
         f.close
         pass
