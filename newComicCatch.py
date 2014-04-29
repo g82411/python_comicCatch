@@ -2,7 +2,10 @@
 import urllib2
 import os
 import re
-
+def Big5toUtf8(str):
+    return str.decode('big5', 'ignore').encode('utf-8', 'ignore')
+def Utf8toBig5(str):
+    return str.decode('utf-8', 'ignore').encode('big5', 'ignore')
 def readUrl(url):
         req = urllib2.urlopen(url)
         html_src = req.read()
@@ -58,6 +61,13 @@ txheaders = {
     'Cookie': 'comichistory=8323%7C%25u6E90%25u541B%25u7269%25u8A9E%2C102%7C%25u706B%25u5F71%25u5FCD%25u8005%2C6942%7C%25u5496%25u83F2%25u5075%25u63A2%25u90E8%2C8792%7C%25u8056%25u9B25%25u58EB%25u661F%25u77E2%25u03A9; __atuvc=5%7C8\r\n'
 }
 input = [str(raw_input('>>>>:'))]
-req = urllib2.Request('http://www.8comic.com/member/search.aspx?k='+input[0]+'&button=%B7j%B4M', txdata, txheaders)
-searchResult = urllib2.urlopen(req).read()
-print searchResult
+req = urllib2.Request('http://www.8comic.com/member/search.aspx?k='+Utf8toBig5(input[0])+'&button=%B7j%B4M', txdata, txheaders)
+searchResult =  re.findall('<a href="/html/(\d+)\.html">',Big5toUtf8(urllib2.urlopen(req).read()))
+resultUrl='http://www.8comic.com/html/'
+for i in range(len(searchResult)):
+	print str(i+1)+Big5toUtf8(re.findall('<font color="#FF6600" style="font:12pt;font-weight:bold;">(.+)</font> <b><font color="#999900">',readUrl(resultUrl+searchResult[i]+'.html'))[0])
+numberwant = [str(raw_input('>>>>:'))]
+catid=re.findall('cview\(\'(\d+)-1\.html\',(\d+)\)',readUrl('http://www.8comic.com/html/'+searchResult[int(numberwant[0])-1]+'.html'))
+print catid
+
+
