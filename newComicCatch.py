@@ -18,9 +18,11 @@ def creatPath(pathName):
 def catchComic(url):
     urls=[]
     f=50
+    ps=''
     htmlText=readUrl(url)
-    chs=re.findall('chs=(\d+)',htmlText)
-    cs = re.findall('cs=\'(\w+)\'',htmlText)
+    ti=re.findall('ti=(\d+)',htmlText)[0]
+    chs=re.findall('chs=(\d+)',htmlText)[0]
+    cs = re.findall('cs=\'(\w+)\'',htmlText)[0]
     def ss(a,b,c,d):
         e=a[b:b+c]
         if d==None:
@@ -38,12 +40,14 @@ def catchComic(url):
                 break
         if c == '':
             c = ss(cs, cc - f, f,None)
-        ps=int(ss(c, 7, 3,None);)
-        si(c,p)
+        ps=int(re.sub('[a-z]','',c))
+        for k in range(1,ps):
+            si(c,k)
     def si(c,p):
-        urls.append('http://img' + ss(c, 4, 2,None) + '.8comic.com/' + ss(c, 6, 1,None) + '/' + ti + '/' + ss(c, 0, 4,None) + '/' + nn(p) + '_' + ss(c, mm(p) + 10, 3, f) + '.jpg')
-    for i in range(1,chs):
-
+        urls.append('http://img' + ss(c, 4, 2,None) + '.8comic.com/' + ss(c, 6, 1,None) + '/' + ti + '/' + ss(c, 0, 4,None) + '/' + str(p).zfill(3)+ '_' + ss(c, mm(p) + 10, 3, f) + '.jpg\r\n')
+    for i in range(1,int(chs)):
+        sp(cs,i)
+    return ps
 def cview(catid,number):
         baseurl=''
         if(catid==4 or catid==6 or catid==12 or catid==22 ):
@@ -76,5 +80,5 @@ for i in range(len(searchResult)):
 numberwant = [str(raw_input('>>>>:'))]
 catid=re.findall('cview\(\'(\d+)-1\.html\',(\d+)\)',readUrl('http://www.8comic.com/html/'+searchResult[int(numberwant[0])-1]+'.html'))[0]
 #catchComic(cview(int(catid[1]),catid[0]))
-print re.findall('chs=(\d+)',readUrl(cview(int(catid[1]),catid[0])))
+print catchComic(cview(int(catid[1]),catid[0]))
 
