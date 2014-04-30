@@ -17,37 +17,26 @@ def creatPath(pathName):
         pass
 def catchComic(url):
     urls=[]
-    f=50
-    ps=''
     htmlText=readUrl(url)
     ti=re.findall('ti=(\d+)',htmlText)[0]
     chs=re.findall('chs=(\d+)',htmlText)[0]
     cs = re.findall('cs=\'(\w+)\'',htmlText)[0]
-    def ss(a,b,c,d):
-        e=a[b:b+c]
-        if d==None:
-            return re.sub('[a-z]','',e)
-        else:
-            return e
+    comicHash=[]
+    for i in range (len(cs)/50):
+        comicHash.append(cs[i*50:(i+1)*50])
     def mm(p):
         return (int((p - 1) / 10) % 10) + (((p - 1) % 10) * 3)
-    def sp(cs,ch):
-        c=''
-        cc = len(cs)
-        for i in range(cc / f):
-            if ss(cs,i * f , 4, None) == ch:
-                c=ss(cs, i * f, f, f);
-                break
-        if c == '':
-            c = ss(cs, cc - f, f,None)
-        ps=int(re.sub('[a-z]','',c))
-        for k in range(1,ps):
-            si(c,k)
-    def si(c,p):
-        urls.append('http://img' + ss(c, 4, 2,None) + '.8comic.com/' + ss(c, 6, 1,None) + '/' + ti + '/' + ss(c, 0, 4,None) + '/' + str(p).zfill(3)+ '_' + ss(c, mm(p) + 10, 3, f) + '.jpg\r\n')
-    for i in range(1,int(chs)):
-        sp(cs,i)
-    return ps
+    def comicHashDecode(comicHashString):
+        resultUrl=[]
+        numberOfPages=re.findall('(\d+)',comicHashString[7:10])[0]
+        for page in range(1,int(numberOfPages)+1):
+            urls.append('http://img'+re.findall('(\d+)',comicHashString[4:6])[0]+'.8comic.com'+re.findall('(\d+)',comicHashString[6:7])[0]+'/'+ti+'/'+re.findall('(\d+)',comicHashString[0:4])[0]+'/'+ str(page).zfill(3)+'_'+comicHashString[mm(page)+10:mm(page)+13]+'.jpg')
+    for j in range(len(comicHash)):
+        comicHashDecode(comicHash[j])
+    print urls
+
+
+
 def cview(catid,number):
         baseurl=''
         if(catid==4 or catid==6 or catid==12 or catid==22 ):
@@ -80,5 +69,4 @@ for i in range(len(searchResult)):
 numberwant = [str(raw_input('>>>>:'))]
 catid=re.findall('cview\(\'(\d+)-1\.html\',(\d+)\)',readUrl('http://www.8comic.com/html/'+searchResult[int(numberwant[0])-1]+'.html'))[0]
 #catchComic(cview(int(catid[1]),catid[0]))
-print catchComic(cview(int(catid[1]),catid[0]))
-
+catchComic(cview(int(catid[1]),catid[0]))
