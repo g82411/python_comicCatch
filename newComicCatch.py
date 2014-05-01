@@ -1,7 +1,9 @@
 #coding=big5
+import gevent
 import urllib2
 import os
 import re
+from gevent import monkey
 def Big5toUtf8(str):
     return str.decode('big5', 'ignore').encode('utf-8', 'ignore')
 def Utf8toBig5(str):
@@ -14,6 +16,20 @@ def readUrl(url):
 def creatPath(pathName):
         if not os.path.exists(pathName):
             os.mkdir(pathName)
+        pass
+def downloadImg(url):
+        print url
+        try:
+            img=readUrl(url)
+        except Exception as e:
+            log=open('log.txt','w+')
+            log.write(str(e)+'\r\n')
+            log.close
+        filename=re.findall('/(\d+)/(\d+)_\w+.jpg',url)[0]
+        f = open (filename[0].zfill(3)+'_'+filename[1]+'.jpg','wb')
+        f.write(img)
+        f.close
+        print filename[0]+'_'+filename[1]
         pass
 def catchComic(url):
     urls=[]
@@ -30,13 +46,13 @@ def catchComic(url):
         resultUrl=[]
         numberOfPages=re.findall('(\d+)',comicHashString[7:10])[0]
         for page in range(1,int(numberOfPages)+1):
-            urls.append('http://img'+re.findall('(\d+)',comicHashString[4:6])[0]+'.8comic.com'+re.findall('(\d+)',comicHashString[6:7])[0]+'/'+ti+'/'+re.findall('(\d+)',comicHashString[0:4])[0]+'/'+ str(page).zfill(3)+'_'+comicHashString[mm(page)+10:mm(page)+13]+'.jpg')
+            urls.append('http://img'+re.findall('(\d+)',comicHashString[4:6])[0]+'.8comic.com'+'/'+re.findall('(\d+)',comicHashString[6:7])[0]+'/'+ti+'/'+re.findall('(\d+)',comicHashString[0:4])[0]+'/'+ str(page).zfill(3)+'_'+comicHashString[mm(page)+10:mm(page)+13]+'.jpg')
     for j in range(len(comicHash)):
         comicHashDecode(comicHash[j])
-    print urls
-
-
-
+    f = open('test.txt','w+')
+    monkey.patch_all()
+    jobs = [gevent.spawn(downloadImg, url) for url in urls]
+    gevent.joinall(jobs)
 def cview(catid,number):
         baseurl=''
         if(catid==4 or catid==6 or catid==12 or catid==22 ):
@@ -64,9 +80,12 @@ input = [str(raw_input('>>>>:'))]
 req = urllib2.Request('http://www.8comic.com/member/search.aspx?k='+Utf8toBig5(input[0])+'&button=%B7j%B4M', txdata, txheaders)
 searchResult =  re.findall('<a href="/html/(\d+)\.html">',Big5toUtf8(urllib2.urlopen(req).read()))
 resultUrl='http://www.8comic.com/html/'
+comicDir=[]
 for i in range(len(searchResult)):
-	print str(i+1)+Big5toUtf8(re.findall('<font color="#FF6600" style="font:12pt;font-weight:bold;">(.+)</font> <b><font color="#999900">',readUrl(resultUrl+searchResult[i]+'.html'))[0])
+    comicDir.append(Big5toUtf8(re.findall('<font color="#FF6600" style="font:12pt;font-weight:bold;">(.+)</font> <b><font color="#999900">',readUrl(resultUrl+searchResult[i]+'.html'))[0]))	
+    print str(i+1)+comicDir[i]
 numberwant = [str(raw_input('>>>>:'))]
 catid=re.findall('cview\(\'(\d+)-1\.html\',(\d+)\)',readUrl('http://www.8comic.com/html/'+searchResult[int(numberwant[0])-1]+'.html'))[0]
-#catchComic(cview(int(catid[1]),catid[0]))
+creatPath(comicDir[int(numberwant[0])-1])
+os.chdir(comicDir[int(numberwant[0])-1])
 catchComic(cview(int(catid[1]),catid[0]))
